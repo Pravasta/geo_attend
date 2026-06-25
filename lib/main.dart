@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'core/constants/app_constants.dart';
 import 'features/attendance/presentation/pages/attendance_history_page.dart';
@@ -8,6 +9,13 @@ import 'injection_container.dart' as di;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Muat konfigurasi environment (.env). Bersifat opsional agar aplikasi tetap
+  // berjalan meski file/key belum tersedia (peta diaktifkan pada Issue #11).
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (_) {
+    // Abaikan: lanjut tanpa env (fitur peta akan menampilkan pesan bila key kosong).
+  }
   await di.init();
   runApp(const GeoAttendApp());
 }
