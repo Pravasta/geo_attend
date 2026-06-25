@@ -1,16 +1,19 @@
 import 'package:get_it/get_it.dart';
 
+import 'core/database/app_database.dart';
+
 /// Service locator global aplikasi.
 final GetIt sl = GetIt.instance;
 
 /// Inisialisasi seluruh dependency aplikasi.
 ///
 /// Pendaftaran dependency dilakukan per-fitur dan core service. Implementasi
-/// detail (database, services, repositories, blocs) ditambahkan pada issue
-/// terkait (#02 dan seterusnya).
+/// detail (services, repositories, blocs) ditambahkan pada issue terkait.
 Future<void> init() async {
   //! Core
-  // Didaftarkan pada Issue #02 (database) & #03 (services).
+  // Database lokal (Drift) — singleton agar satu koneksi dipakai bersama.
+  sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
+  // Services didaftarkan pada Issue #03.
 
   //! Features - Location
   // Didaftarkan pada Issue #04 (domain/data) & #05 (presentation).
