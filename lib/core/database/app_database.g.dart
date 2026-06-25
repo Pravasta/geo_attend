@@ -473,12 +473,27 @@ class $AttendancesTable extends Attendances
   late final GeneratedColumn<int> locationId = GeneratedColumn<int>(
     'location_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES locations (id) ON DELETE CASCADE',
+      'REFERENCES locations (id) ON DELETE SET NULL',
     ),
+  );
+  static const VerificationMeta _locationNameMeta = const VerificationMeta(
+    'locationName',
+  );
+  @override
+  late final GeneratedColumn<String> locationName = GeneratedColumn<String>(
+    'location_name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 100,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _latitudeMeta = const VerificationMeta(
     'latitude',
@@ -542,6 +557,7 @@ class $AttendancesTable extends Attendances
   List<GeneratedColumn> get $columns => [
     id,
     locationId,
+    locationName,
     latitude,
     longitude,
     distance,
@@ -568,8 +584,17 @@ class $AttendancesTable extends Attendances
         _locationIdMeta,
         locationId.isAcceptableOrUnknown(data['location_id']!, _locationIdMeta),
       );
+    }
+    if (data.containsKey('location_name')) {
+      context.handle(
+        _locationNameMeta,
+        locationName.isAcceptableOrUnknown(
+          data['location_name']!,
+          _locationNameMeta,
+        ),
+      );
     } else if (isInserting) {
-      context.missing(_locationIdMeta);
+      context.missing(_locationNameMeta);
     }
     if (data.containsKey('latitude')) {
       context.handle(
@@ -625,6 +650,10 @@ class $AttendancesTable extends Attendances
       locationId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}location_id'],
+      ),
+      locationName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}location_name'],
       )!,
       latitude: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
@@ -657,7 +686,11 @@ class $AttendancesTable extends Attendances
 
 class Attendance extends DataClass implements Insertable<Attendance> {
   final int id;
-  final int locationId;
+  final int? locationId;
+
+  /// Snapshot nama lokasi saat absensi dilakukan (tahan terhadap penghapusan
+  /// lokasi master).
+  final String locationName;
   final double latitude;
   final double longitude;
   final double distance;
@@ -665,7 +698,8 @@ class Attendance extends DataClass implements Insertable<Attendance> {
   final DateTime timestamp;
   const Attendance({
     required this.id,
-    required this.locationId,
+    this.locationId,
+    required this.locationName,
     required this.latitude,
     required this.longitude,
     required this.distance,
@@ -676,7 +710,10 @@ class Attendance extends DataClass implements Insertable<Attendance> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['location_id'] = Variable<int>(locationId);
+    if (!nullToAbsent || locationId != null) {
+      map['location_id'] = Variable<int>(locationId);
+    }
+    map['location_name'] = Variable<String>(locationName);
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
     map['distance'] = Variable<double>(distance);
@@ -688,7 +725,10 @@ class Attendance extends DataClass implements Insertable<Attendance> {
   AttendancesCompanion toCompanion(bool nullToAbsent) {
     return AttendancesCompanion(
       id: Value(id),
-      locationId: Value(locationId),
+      locationId: locationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(locationId),
+      locationName: Value(locationName),
       latitude: Value(latitude),
       longitude: Value(longitude),
       distance: Value(distance),
@@ -704,7 +744,8 @@ class Attendance extends DataClass implements Insertable<Attendance> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Attendance(
       id: serializer.fromJson<int>(json['id']),
-      locationId: serializer.fromJson<int>(json['locationId']),
+      locationId: serializer.fromJson<int?>(json['locationId']),
+      locationName: serializer.fromJson<String>(json['locationName']),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
       distance: serializer.fromJson<double>(json['distance']),
@@ -717,7 +758,8 @@ class Attendance extends DataClass implements Insertable<Attendance> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'locationId': serializer.toJson<int>(locationId),
+      'locationId': serializer.toJson<int?>(locationId),
+      'locationName': serializer.toJson<String>(locationName),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
       'distance': serializer.toJson<double>(distance),
@@ -728,7 +770,8 @@ class Attendance extends DataClass implements Insertable<Attendance> {
 
   Attendance copyWith({
     int? id,
-    int? locationId,
+    Value<int?> locationId = const Value.absent(),
+    String? locationName,
     double? latitude,
     double? longitude,
     double? distance,
@@ -736,7 +779,8 @@ class Attendance extends DataClass implements Insertable<Attendance> {
     DateTime? timestamp,
   }) => Attendance(
     id: id ?? this.id,
-    locationId: locationId ?? this.locationId,
+    locationId: locationId.present ? locationId.value : this.locationId,
+    locationName: locationName ?? this.locationName,
     latitude: latitude ?? this.latitude,
     longitude: longitude ?? this.longitude,
     distance: distance ?? this.distance,
@@ -749,6 +793,9 @@ class Attendance extends DataClass implements Insertable<Attendance> {
       locationId: data.locationId.present
           ? data.locationId.value
           : this.locationId,
+      locationName: data.locationName.present
+          ? data.locationName.value
+          : this.locationName,
       latitude: data.latitude.present ? data.latitude.value : this.latitude,
       longitude: data.longitude.present ? data.longitude.value : this.longitude,
       distance: data.distance.present ? data.distance.value : this.distance,
@@ -762,6 +809,7 @@ class Attendance extends DataClass implements Insertable<Attendance> {
     return (StringBuffer('Attendance(')
           ..write('id: $id, ')
           ..write('locationId: $locationId, ')
+          ..write('locationName: $locationName, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('distance: $distance, ')
@@ -775,6 +823,7 @@ class Attendance extends DataClass implements Insertable<Attendance> {
   int get hashCode => Object.hash(
     id,
     locationId,
+    locationName,
     latitude,
     longitude,
     distance,
@@ -787,6 +836,7 @@ class Attendance extends DataClass implements Insertable<Attendance> {
       (other is Attendance &&
           other.id == this.id &&
           other.locationId == this.locationId &&
+          other.locationName == this.locationName &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude &&
           other.distance == this.distance &&
@@ -796,7 +846,8 @@ class Attendance extends DataClass implements Insertable<Attendance> {
 
 class AttendancesCompanion extends UpdateCompanion<Attendance> {
   final Value<int> id;
-  final Value<int> locationId;
+  final Value<int?> locationId;
+  final Value<String> locationName;
   final Value<double> latitude;
   final Value<double> longitude;
   final Value<double> distance;
@@ -805,6 +856,7 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
   const AttendancesCompanion({
     this.id = const Value.absent(),
     this.locationId = const Value.absent(),
+    this.locationName = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
     this.distance = const Value.absent(),
@@ -813,13 +865,14 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
   });
   AttendancesCompanion.insert({
     this.id = const Value.absent(),
-    required int locationId,
+    this.locationId = const Value.absent(),
+    required String locationName,
     required double latitude,
     required double longitude,
     required double distance,
     required String status,
     this.timestamp = const Value.absent(),
-  }) : locationId = Value(locationId),
+  }) : locationName = Value(locationName),
        latitude = Value(latitude),
        longitude = Value(longitude),
        distance = Value(distance),
@@ -827,6 +880,7 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
   static Insertable<Attendance> custom({
     Expression<int>? id,
     Expression<int>? locationId,
+    Expression<String>? locationName,
     Expression<double>? latitude,
     Expression<double>? longitude,
     Expression<double>? distance,
@@ -836,6 +890,7 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (locationId != null) 'location_id': locationId,
+      if (locationName != null) 'location_name': locationName,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (distance != null) 'distance': distance,
@@ -846,7 +901,8 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
 
   AttendancesCompanion copyWith({
     Value<int>? id,
-    Value<int>? locationId,
+    Value<int?>? locationId,
+    Value<String>? locationName,
     Value<double>? latitude,
     Value<double>? longitude,
     Value<double>? distance,
@@ -856,6 +912,7 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
     return AttendancesCompanion(
       id: id ?? this.id,
       locationId: locationId ?? this.locationId,
+      locationName: locationName ?? this.locationName,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       distance: distance ?? this.distance,
@@ -872,6 +929,9 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
     }
     if (locationId.present) {
       map['location_id'] = Variable<int>(locationId.value);
+    }
+    if (locationName.present) {
+      map['location_name'] = Variable<String>(locationName.value);
     }
     if (latitude.present) {
       map['latitude'] = Variable<double>(latitude.value);
@@ -896,6 +956,7 @@ class AttendancesCompanion extends UpdateCompanion<Attendance> {
     return (StringBuffer('AttendancesCompanion(')
           ..write('id: $id, ')
           ..write('locationId: $locationId, ')
+          ..write('locationName: $locationName, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('distance: $distance, ')
@@ -923,7 +984,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         'locations',
         limitUpdateKind: UpdateKind.delete,
       ),
-      result: [TableUpdate('attendances', kind: UpdateKind.delete)],
+      result: [TableUpdate('attendances', kind: UpdateKind.update)],
     ),
   ]);
 }
@@ -1264,7 +1325,8 @@ typedef $$LocationsTableProcessedTableManager =
 typedef $$AttendancesTableCreateCompanionBuilder =
     AttendancesCompanion Function({
       Value<int> id,
-      required int locationId,
+      Value<int?> locationId,
+      required String locationName,
       required double latitude,
       required double longitude,
       required double distance,
@@ -1274,7 +1336,8 @@ typedef $$AttendancesTableCreateCompanionBuilder =
 typedef $$AttendancesTableUpdateCompanionBuilder =
     AttendancesCompanion Function({
       Value<int> id,
-      Value<int> locationId,
+      Value<int?> locationId,
+      Value<String> locationName,
       Value<double> latitude,
       Value<double> longitude,
       Value<double> distance,
@@ -1289,9 +1352,9 @@ final class $$AttendancesTableReferences
   static $LocationsTable _locationIdTable(_$AppDatabase db) =>
       db.locations.createAlias('attendances__location_id__locations__id');
 
-  $$LocationsTableProcessedTableManager get locationId {
-    final $_column = $_itemColumn<int>('location_id')!;
-
+  $$LocationsTableProcessedTableManager? get locationId {
+    final $_column = $_itemColumn<int>('location_id');
+    if ($_column == null) return null;
     final manager = $$LocationsTableTableManager(
       $_db,
       $_db.locations,
@@ -1315,6 +1378,11 @@ class $$AttendancesTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get locationName => $composableBuilder(
+    column: $table.locationName,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1381,6 +1449,11 @@ class $$AttendancesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get locationName => $composableBuilder(
+    column: $table.locationName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get latitude => $composableBuilder(
     column: $table.latitude,
     builder: (column) => ColumnOrderings(column),
@@ -1441,6 +1514,11 @@ class $$AttendancesTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get locationName => $composableBuilder(
+    column: $table.locationName,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get latitude =>
       $composableBuilder(column: $table.latitude, builder: (column) => column);
@@ -1510,7 +1588,8 @@ class $$AttendancesTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int> locationId = const Value.absent(),
+                Value<int?> locationId = const Value.absent(),
+                Value<String> locationName = const Value.absent(),
                 Value<double> latitude = const Value.absent(),
                 Value<double> longitude = const Value.absent(),
                 Value<double> distance = const Value.absent(),
@@ -1519,6 +1598,7 @@ class $$AttendancesTableTableManager
               }) => AttendancesCompanion(
                 id: id,
                 locationId: locationId,
+                locationName: locationName,
                 latitude: latitude,
                 longitude: longitude,
                 distance: distance,
@@ -1528,7 +1608,8 @@ class $$AttendancesTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required int locationId,
+                Value<int?> locationId = const Value.absent(),
+                required String locationName,
                 required double latitude,
                 required double longitude,
                 required double distance,
@@ -1537,6 +1618,7 @@ class $$AttendancesTableTableManager
               }) => AttendancesCompanion.insert(
                 id: id,
                 locationId: locationId,
+                locationName: locationName,
                 latitude: latitude,
                 longitude: longitude,
                 distance: distance,

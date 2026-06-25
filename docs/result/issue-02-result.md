@@ -14,8 +14,9 @@ Injection.
 1. **`core/database/tables.dart`** — definisi tabel:
    - `Locations`: `id`, `name`, `latitude`, `longitude`, `address` (nullable),
      `radius` (default 50 m via `AppConstants.defaultRadiusMeters`), `createdAt`.
-   - `Attendances`: `id`, `locationId` (FK → `locations.id`, `onDelete: cascade`),
-     `latitude`, `longitude`, `distance`, `status`, `timestamp`.
+   - `Attendances`: `id`, `locationId` (FK → `locations.id`, **nullable**,
+     `onDelete: setNull`), `locationName` (snapshot nama lokasi), `latitude`,
+     `longitude`, `distance`, `status`, `timestamp`.
 2. **`core/database/app_database.dart`** — `@DriftDatabase`:
    - `schemaVersion = 1`.
    - `MigrationStrategy` dengan `createAll()` dan `PRAGMA foreign_keys = ON`.
@@ -27,8 +28,9 @@ Injection.
    di `injection_container.dart`.
 5. **Unit test** — `test/core/database/app_database_test.dart`:
    - Insert & query lokasi (verifikasi radius default 50 m).
-   - Insert absensi terkait lokasi.
-   - Hapus lokasi → cascade menghapus absensi terkait.
+   - Insert absensi terkait lokasi (termasuk snapshot `locationName`).
+   - Hapus lokasi → riwayat absensi **tetap tersimpan** (`locationId` di-set
+     null, `locationName` bertahan).
 
 ## Verifikasi
 | Cek | Hasil |
@@ -38,11 +40,13 @@ Injection.
 | `flutter test` | ✅ 4 tests passed (1 smoke + 3 database) |
 
 ## Keputusan Teknis
-- **Foreign key `onDelete: cascade`** — menghapus lokasi akan menghapus seluruh
-  riwayat absensi yang terkait. Ini menjaga integritas relasi dan mencegah baris
-  absensi yatim (orphan). Jika nantinya riwayat ingin tetap dipertahankan setelah
-  lokasi dihapus, dapat dipertimbangkan menyimpan snapshot nama lokasi pada tabel
-  absensi (di luar scope issue ini).
+- **Riwayat absensi dipertahankan saat lokasi dihapus** — `locationId` dibuat
+  nullable dengan `onDelete: setNull`, dan ditambahkan kolom snapshot
+  `locationName`. Saat lokasi master dihapus, baris absensi tidak ikut terhapus:
+  relasi `locationId` menjadi null sementara `locationName` menjaga konteks
+  riwayat tetap bermakna. Pilihan ini sesuai sifat data kehadiran yang tidak
+  boleh hilang. _(Sempat dipertimbangkan `onDelete: cascade`, namun diganti agar
+  riwayat aman.)_
 - **File generated di-commit** — `.gitignore` disesuaikan agar `*.g.dart` ikut
   ter-track, sehingga repo dapat di-build tanpa wajib menjalankan codegen lebih
   dulu (belum ada CI yang menjalankan `build_runner`).

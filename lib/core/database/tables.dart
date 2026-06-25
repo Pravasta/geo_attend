@@ -22,10 +22,19 @@ class Locations extends Table {
 /// Setiap baris merekam satu percobaan absensi: koordinat pengguna saat absen,
 /// jarak terhitung ke titik lokasi, status (accepted/rejected), dan waktu.
 /// Menyimpan koordinat & jarak berguna sebagai bukti audit verifikasi.
+///
+/// Riwayat absensi sengaja dipertahankan meski lokasinya dihapus: `locationId`
+/// memakai `onDelete: setNull` (menjadi null saat lokasi dihapus), sementara
+/// `locationName` menyimpan snapshot nama lokasi agar riwayat tetap bermakna.
 class Attendances extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get locationId =>
-      integer().references(Locations, #id, onDelete: KeyAction.cascade)();
+  IntColumn get locationId => integer()
+      .nullable()
+      .references(Locations, #id, onDelete: KeyAction.setNull)();
+
+  /// Snapshot nama lokasi saat absensi dilakukan (tahan terhadap penghapusan
+  /// lokasi master).
+  TextColumn get locationName => text().withLength(min: 1, max: 100)();
   RealColumn get latitude => real()();
   RealColumn get longitude => real()();
   RealColumn get distance => real()();

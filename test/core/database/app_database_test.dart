@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geo_attend/core/constants/app_constants.dart';
@@ -47,7 +48,8 @@ void main() {
 
       await db.into(db.attendances).insert(
             AttendancesCompanion.insert(
-              locationId: locationId,
+              locationId: Value(locationId),
+              locationName: 'Cabang A',
               latitude: -6.21,
               longitude: 106.81,
               distance: 12.5,
@@ -59,11 +61,13 @@ void main() {
 
       expect(rows, hasLength(1));
       expect(rows.first.locationId, locationId);
+      expect(rows.first.locationName, 'Cabang A');
       expect(rows.first.distance, 12.5);
       expect(rows.first.status, AppConstants.statusAccepted);
     });
 
-    test('hapus lokasi meng-cascade hapus absensi terkait', () async {
+    test('hapus lokasi mempertahankan riwayat absensi (locationId di-set null)',
+        () async {
       final locationId = await db.into(db.locations).insert(
             LocationsCompanion.insert(
               name: 'Cabang B',
@@ -73,7 +77,8 @@ void main() {
           );
       await db.into(db.attendances).insert(
             AttendancesCompanion.insert(
-              locationId: locationId,
+              locationId: Value(locationId),
+              locationName: 'Cabang B',
               latitude: -6.22,
               longitude: 106.82,
               distance: 5.0,
@@ -86,7 +91,10 @@ void main() {
           .go();
 
       final attendances = await db.select(db.attendances).get();
-      expect(attendances, isEmpty);
+      // Riwayat tetap ada; relasi lokasi di-set null, snapshot nama bertahan.
+      expect(attendances, hasLength(1));
+      expect(attendances.first.locationId, isNull);
+      expect(attendances.first.locationName, 'Cabang B');
     });
   });
 }
