@@ -56,3 +56,6 @@ coverage/
 .fvm/versions
 .fvm/release
 .fvm/version
+
+# Environment — rahasia (API key). Hanya .env.example yang di-commit.
+.env

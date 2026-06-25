@@ -15,7 +15,7 @@ ditutup dengan **PR ke `main`**.
 | [06](issue-06-attendance-domain-data.md) | Fitur Absensi — Domain & Data (Verifikasi 50m) | `feat/issue-06-attendance-domain-data` | #02, #03, #04 | ✅ Done |
 | [07](issue-07-attendance-presentation.md) | Fitur Absensi — Presentation (BLoC + UI + Dialog) | `feat/issue-07-attendance-presentation` | #06, #05 | ✅ Done |
 | [08](issue-08-attendance-history.md) | Riwayat Absensi (List + Format Tanggal) | `feat/issue-08-attendance-history` | #06, #07 | ✅ Done |
-| [10](issue-10-env-google-maps-key.md) | Konfigurasi Environment (.env) & Google Maps API Key | `feat/issue-10-env-google-maps-key` | #01 | ⬜ Todo |
+| [10](issue-10-env-google-maps-key.md) | Konfigurasi Environment (.env) & Google Maps API Key | `feat/issue-10-env-google-maps-key` | #01 | ✅ Done |
 | [11](issue-11-map-picker.md) | Map Picker: Pilih Lokasi via Google Maps | `feat/issue-11-map-picker` | #10, #05 | ⬜ Todo |
 | [09](issue-09-polish-final.md) | Penyempurnaan UI/UX, Edge Cases & Dokumentasi Akhir | `feat/issue-09-polish-final` | semua (termasuk #10, #11) | ⬜ Todo |
 
