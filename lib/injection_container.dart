@@ -2,9 +2,18 @@ import 'package:get_it/get_it.dart';
 
 import 'core/database/app_database.dart';
 import 'core/services/connectivity_service.dart';
+import 'core/services/geocoding_service.dart';
 import 'core/services/location_service.dart';
 import 'core/services/permission_service.dart';
 import 'core/utils/distance_calculator.dart';
+import 'features/location/data/datasources/location_local_datasource.dart';
+import 'features/location/data/repositories/location_repository_impl.dart';
+import 'features/location/domain/repositories/location_repository.dart';
+import 'features/location/domain/usecases/add_location.dart';
+import 'features/location/domain/usecases/capture_current_location.dart';
+import 'features/location/domain/usecases/delete_location.dart';
+import 'features/location/domain/usecases/get_locations.dart';
+import 'features/location/domain/usecases/update_location.dart';
 
 /// Service locator global aplikasi.
 final GetIt sl = GetIt.instance;
@@ -29,9 +38,31 @@ Future<void> init() async {
   sl.registerLazySingleton<ConnectivityService>(
     () => ConnectivityServiceImpl(),
   );
+  sl.registerLazySingleton<GeocodingService>(() => GeocodingServiceImpl());
 
   //! Features - Location
-  // Didaftarkan pada Issue #04 (domain/data) & #05 (presentation).
+  // Data sources
+  sl.registerLazySingleton<LocationLocalDataSource>(
+    () => LocationLocalDataSourceImpl(sl<AppDatabase>()),
+  );
+  // Repository
+  sl.registerLazySingleton<LocationRepository>(
+    () => LocationRepositoryImpl(
+      localDataSource: sl<LocationLocalDataSource>(),
+      locationService: sl<LocationService>(),
+      geocodingService: sl<GeocodingService>(),
+      connectivityService: sl<ConnectivityService>(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => GetLocations(sl<LocationRepository>()));
+  sl.registerLazySingleton(() => AddLocation(sl<LocationRepository>()));
+  sl.registerLazySingleton(() => UpdateLocation(sl<LocationRepository>()));
+  sl.registerLazySingleton(() => DeleteLocation(sl<LocationRepository>()));
+  sl.registerLazySingleton(
+    () => CaptureCurrentLocation(sl<LocationRepository>()),
+  );
+  // Presentation (BLoC) didaftarkan pada Issue #05.
 
   //! Features - Attendance
   // Didaftarkan pada Issue #06 (domain/data) & #07 (presentation).
