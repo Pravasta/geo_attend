@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../injection_container.dart';
 import '../../domain/entities/location_entity.dart';
 import '../bloc/location_bloc.dart';
+import 'map_picker_page.dart';
 
 /// Form tambah / edit lokasi dengan tombol geotagging.
 class LocationFormPage extends StatelessWidget {
@@ -58,6 +59,25 @@ class _LocationFormViewState extends State<_LocationFormView> {
   }
 
   bool get _hasCoordinate => _latitude != null && _longitude != null;
+
+  Future<void> _pickOnMap() async {
+    final result = await Navigator.of(context).push<MapPickerResult>(
+      MaterialPageRoute(
+        builder: (_) => MapPickerPage(
+          initialLatitude: _latitude,
+          initialLongitude: _longitude,
+        ),
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        _latitude = result.latitude;
+        _longitude = result.longitude;
+        _address = result.address;
+      });
+      Fluttertoast.showToast(msg: 'Titik lokasi dipilih dari peta.');
+    }
+  }
 
   void _onSave() {
     if (!_formKey.currentState!.validate()) return;
@@ -139,7 +159,13 @@ class _LocationFormViewState extends State<_LocationFormView> {
                               .read<LocationBloc>()
                               .add(const CaptureCoordinate()),
                       icon: const Icon(Icons.my_location),
-                      label: const Text('Ambil Koordinat (Geotagging)'),
+                      label: const Text('Ambil Koordinat (GPS)'),
+                    ),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: isBusy ? null : _pickOnMap,
+                      icon: const Icon(Icons.map),
+                      label: const Text('Pilih di Peta'),
                     ),
                     const SizedBox(height: 24),
                     FilledButton.icon(
