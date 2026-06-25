@@ -45,8 +45,8 @@ app.*.map.json
 /android/app/release
 
 # Generated files (Drift, build_runner)
-*.g.dart
-*.freezed.dart
+# Sengaja TIDAK diabaikan agar repo dapat di-build tanpa menjalankan codegen
+# lebih dulu. Regenerasi dengan: `fvm dart run build_runner build`.
 
 # Coverage
 coverage/
