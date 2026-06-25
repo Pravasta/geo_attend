@@ -5,12 +5,24 @@
 - **Dikerjakan sebelum**: #09 (final)
 - **Status**: ⬜ Todo
 
+## Latar Belakang (Kaitan Requirement)
+Requirement asli task (`docs/task.txt`, baris 8):
+> "Pengguna dapat menambahkan lokasi baru dan melakukan geotagging untuk
+> mendapatkan titik lokasi (pin location) **secara akurat**."
+
+Geotagging berbasis GPS murni (Issue #04/#05) akurasinya bergantung pada sinyal
+perangkat dan bisa meleset beberapa meter. Untuk memenuhi syarat **"pin location
+secara akurat"**, pengguna perlu dapat **melihat dan menyesuaikan pin secara
+visual di peta**. Issue ini menambahkan map picker Google Maps sebagai cara
+memperoleh titik lokasi yang lebih presisi.
+
 ## Deskripsi
 Menambahkan kemampuan memilih titik lokasi menggunakan **Google Maps**
 (`google_maps_flutter`). Pengguna dapat membuka peta, menggeser/menyentuh untuk
-menempatkan pin, lalu mengonfirmasi titik tersebut sebagai koordinat lokasi.
-Fitur ini **melengkapi** geotagging GPS yang sudah ada (Issue #04/#05) — pengguna
-bebas memilih: ambil koordinat via GPS **atau** pilih di peta.
+menempatkan pin, memperbesar (zoom) untuk presisi, lalu mengonfirmasi titik
+tersebut sebagai koordinat lokasi. Fitur ini **melengkapi** geotagging GPS yang
+sudah ada (Issue #04/#05) — pengguna bebas memilih: ambil koordinat via GPS
+**atau** sesuaikan/pilih titik secara akurat di peta.
 
 ## Scope
 **In Scope**
@@ -19,8 +31,10 @@ bebas memilih: ambil koordinat via GPS **atau** pilih di peta.
   - Posisi awal: lokasi saat ini (jika izin ada) atau koordinat lokasi yang
     sedang diedit; fallback ke koordinat default.
   - Pilih titik dengan tap pada peta dan/atau menggeser marker.
-  - Tampilkan koordinat terpilih + tombol "Gunakan Lokasi Ini".
+  - Dukung **zoom** dan tipe peta (normal/satellite) untuk membantu presisi.
+  - Tampilkan koordinat terpilih (presisi 6 desimal) + tombol "Gunakan Lokasi Ini".
   - (Opsional) reverse geocoding untuk menampilkan alamat titik terpilih.
+  - (Opsional) tombol "Ke Lokasi Saya" untuk memusatkan peta ke posisi GPS.
 - Integrasi ke `LocationFormPage`:
   - Tombol baru "Pilih di Peta" di samping "Ambil Koordinat (GPS)".
   - Hasil pemilihan mengisi `latitude`, `longitude`, dan `address`.
@@ -47,9 +61,11 @@ bebas memilih: ambil koordinat via GPS **atau** pilih di peta.
 7. Uji manual di perangkat (peta tampil, pilih titik, koordinat terisi).
 
 ## Acceptance Criteria
-- Pengguna dapat membuka peta dari form lokasi dan memilih titik.
-- Koordinat (dan alamat bila tersedia) hasil pemilihan masuk ke form.
-- Geotagging GPS lama tetap berfungsi (tidak ada regресi).
+- Pengguna dapat membuka peta dari form lokasi dan memilih titik **secara akurat**
+  (dapat zoom & menggeser pin hingga tepat).
+- Koordinat presisi (6 desimal) dan alamat (bila tersedia) hasil pemilihan masuk
+  ke form.
+- Geotagging GPS lama tetap berfungsi (tidak ada regresi).
 - Aplikasi tidak crash bila API key belum diisi (pesan jelas).
 
 ## Testing
