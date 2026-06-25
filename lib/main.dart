@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'core/constants/app_constants.dart';
+import 'features/attendance/presentation/pages/attendance_history_page.dart';
 import 'features/attendance/presentation/pages/attendance_page.dart';
 import 'features/location/presentation/pages/location_list_page.dart';
 import 'injection_container.dart' as di;
@@ -63,6 +64,19 @@ class _TempHomePage extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.edit_location_alt),
                 label: const Text('Manajemen Lokasi'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const AttendanceHistoryPage(),
+                  ),
+                ),
+                icon: const Icon(Icons.history),
+                label: const Text('Riwayat Absensi'),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
