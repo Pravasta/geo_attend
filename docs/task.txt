@@ -1,0 +1,75 @@
+Saya mendapatkan tugas untuk membuat sebuah aplikasi flutter sederhana yaitu aplikasi absensi.
+Aplikasi ini akan memungkinkan pengguna untuk melakukan absensi berdasarkan lokasi mereka secara akurat.
+
+Berikut task asli nya 
+
+Silakan buat sebuah aplikasi mobile sederhana menggunakan Flutter dengan fitur utama sebagai berikut:
+Manajemen Lokasi (Master Data):
+Pengguna dapat menambahkan lokasi baru dan melakukan geotagging untuk mendapatkan titik lokasi (pin location) secara akurat.
+
+Fitur Absensi:
+Pengguna dapat melakukan absensi dengan pelacakan lokasi GPS. Sistem akan memverifikasi apakah lokasi pengguna berada dalam radius maksimal 50 meter dari titik lokasi (pin location) yang telah ditentukan.
+Jika pengguna berada lebih dari 50 meter, maka absensi akan ditolak (rejected).
+
+
+Buatkan file Brainstorming.md pada folder docs/brainstorming/ 
+
+ide yang saya miliki terkait aplikasi ini
+1. **Manajemen Lokasi (Master Data)**
+    - Pengguna dapat menambahkan lokasi baru dengan memasukkan nama lokasi dan melakukan geotagging untuk mendapatkan koordinat GPS.
+    - Setiap lokasi yang ditambahkan akan disimpan dalam database lokal.
+    - Pengguna dapat melihat daftar lokasi yang telah ditambahkan dan mengedit atau menghapus lokasi jika diperlukan. 
+2. **Fitur Absensi**
+    - Pengguna dapat melakukan absensi dengan menekan tombol "Absensi" pada aplikasi.
+    - Aplikasi akan meminta izin untuk mengakses lokasi pengguna.
+    - Setelah izin diberikan, aplikasi akan mengambil koordinat GPS pengguna dan membandingkannya dengan koordinat lokasi yang telah ditentukan.
+    - Jika jarak antara lokasi pengguna dan lokasi yang ditentukan kurang dari atau sama dengan 50 meter, absensi akan diterima dan dicatat dalam database
+    - Jika jarak lebih dari 50 meter, absensi akan ditolak dan pengguna akan menerima notifikasi bahwa absensi gagal karena berada di luar radius yang ditentukan.
+3. **Database**
+    - Gunakan Drift atau SQLite untuk menyimpan data lokasi dan absensi.
+    - Pastikan untuk mengelola skema database dengan baik agar mudah dalam pengembangan dan pemeliharaan.
+4. **UI/UX**
+    - Desain antarmuka yang sederhana dan intuitif agar pengguna dapat dengan mudah menambahkan lokasi dan melakukan absensi.
+    - Gunakan widget Flutter seperti ListView untuk menampilkan daftar lokasi dan absensi.
+    - Tambahkan dialog untuk memberikan umpan balik kepada pengguna tentang status absensi mereka.
+5. **Keamanan dan Privasi**
+    - Pastikan aplikasi meminta izin lokasi dengan jelas dan menjelaskan mengapa izin tersebut diperlukan.
+    - Data lokasi pengguna harus disimpan dengan aman dan tidak dibagikan tanpa izin.
+6. **Testing**
+    - Lakukan pengujian pada berbagai perangkat untuk memastikan aplikasi berjalan dengan baik.
+    - Uji fitur absensi dengan berbagai skenario lokasi untuk memastikan akurasi dan keandalan sistem.
+7. **Fitur Tambahan (Opsional)**
+    - Tambahkan fitur riwayat absensi sehingga pengguna dapat melihat catatan absensi mereka sebelumnya.
+8. **Architecture**
+    - Gunakan Clean Architecture untuk memisahkan logika bisnis, presentasi, dan data agar aplikasi lebih mudah untuk dikembangkan dan dipelihara.
+    - Buat folder terpisah untuk setiap lapisan (presentation, domain, data) dan gunakan dependency injection untuk mengelola ketergantungan antar lapisan.
+9. **State Management**
+    - Gunakan state management BLOC untuk mengelola state aplikasi agar lebih mudah dalam pengembangan dan pemeliharaan.
+    - Pastikan untuk memisahkan logika bisnis dari UI agar lebih mudah untuk diuji dan dipelihara.
+
+Rules Pengerjaan :
+1. Buatkan file brainstorming.md pada folder docs/brainstorming/ dengan format markdown.
+2. Tuliskan ide-ide yang telah disebutkan di atas dalam file brainstorming.md dengan format yang rapi dan jelas.
+3. Jika ada ide tambahan yang muncul selama proses brainstorming, tambahkan ke dalam file tersebut dengan penjelasan yang jelas.
+4. Pecah task menjadi beberapa issue yang lebih kecil agar lebih mudah untuk dikerjakan dan dilacak pada folder docs/issues/ dengan format markdown.
+5. Setiap issue harus memiliki judul yang jelas, deskripsi tugas, dan langkah-langkah yang diperlukan untuk menyelesaikan tugas tersebut.
+6. Proses pengerjaan issue harus didokumentasikan dengan baik pada folder docs/results/ dengan format markdown.
+7. Berikan scope yang jelas untuk setiap issue agar tidak ada kebingungan dalam pengerjaan.
+8. Pastikan untuk selalu melakukan review dan testing pada setiap issue yang telah diselesaikan sebelum melanjutkan ke issue berikutnya.
+9. Jika terdapat kendala dan harus diperbaiki selalu buat file revision pada folder docs/revision/ dengan format markdown yang berisi deskripsi masalah, langkah-langkah perbaikan, dan harapan perbaikan.
+10. Setelah semua issue selesai dikerjakan, buatlah dokumentasi akhir pada folder docs/final/ dengan format markdown yang berisi ringkasan dari seluruh proses pengerjaan, hasil akhir aplikasi, dan catatan penting lainnya.
+11. Selalu mulai dengan membuat branch baru untuk setiap pengerjaan issue dan ditutup dengan pembuatan PR ke branch main.
+12. Pastikan untuk selalu melakukan commit dengan pesan yang jelas dan deskriptif agar mudah dilacak menggunakan Github CLI.
+13. Ingat untuk selalu mendokumentasikan progress nya ya.
+
+Package yang digunakan :
+1. **geolocator**: Untuk mendapatkan koordinat GPS pengguna.
+2. **geocoding**: Untuk melakukan geotagging dan mendapatkan alamat dari koordinat GPS.
+3. **drift**: Untuk manajemen database lokal.
+4. **flutter_bloc**: Untuk state management menggunakan BLoC pattern.
+5. **permission_handler**: Untuk meminta izin akses lokasi dari pengguna.
+6. **fluttertoast**: Untuk menampilkan notifikasi singkat kepada pengguna.
+7. **intl**: Untuk format tanggal dan waktu pada catatan absensi.
+8. **equatable**: Untuk mempermudah perbandingan objek dalam state management.
+9. **connectivity_plus**: Untuk memeriksa status koneksi internet pengguna.
+10. Jika ada package tambahkan menurut anda, silahkan tambahkan dengan penjelasan kegunaannya.
