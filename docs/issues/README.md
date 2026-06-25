@@ -11,7 +11,7 @@ ditutup dengan **PR ke `main`**.
 | [02](issue-02-database-drift.md) | Setup Database Drift (locations & attendances) | `feat/issue-02-database-drift` | #01 | ✅ Done |
 | [03](issue-03-core-services.md) | Core Services: Permission, Location & Distance Util | `feat/issue-03-core-services` | #01 | ✅ Done |
 | [04](issue-04-location-domain-data.md) | Fitur Lokasi — Domain & Data (CRUD + Geotagging) | `feat/issue-04-location-domain-data` | #02, #03 | ✅ Done |
-| [05](issue-05-location-presentation.md) | Fitur Lokasi — Presentation (BLoC + UI) | `feat/issue-05-location-presentation` | #04 | ⬜ Todo |
+| [05](issue-05-location-presentation.md) | Fitur Lokasi — Presentation (BLoC + UI) | `feat/issue-05-location-presentation` | #04 | ✅ Done |
 | [06](issue-06-attendance-domain-data.md) | Fitur Absensi — Domain & Data (Verifikasi 50m) | `feat/issue-06-attendance-domain-data` | #02, #03, #04 | ⬜ Todo |
 | [07](issue-07-attendance-presentation.md) | Fitur Absensi — Presentation (BLoC + UI + Dialog) | `feat/issue-07-attendance-presentation` | #06, #05 | ⬜ Todo |
 | [08](issue-08-attendance-history.md) | Riwayat Absensi (List + Format Tanggal) | `feat/issue-08-attendance-history` | #06, #07 | ⬜ Todo |

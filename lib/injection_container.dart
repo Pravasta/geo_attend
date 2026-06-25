@@ -14,6 +14,7 @@ import 'features/location/domain/usecases/capture_current_location.dart';
 import 'features/location/domain/usecases/delete_location.dart';
 import 'features/location/domain/usecases/get_locations.dart';
 import 'features/location/domain/usecases/update_location.dart';
+import 'features/location/presentation/bloc/location_bloc.dart';
 
 /// Service locator global aplikasi.
 final GetIt sl = GetIt.instance;
@@ -62,7 +63,16 @@ Future<void> init() async {
   sl.registerLazySingleton(
     () => CaptureCurrentLocation(sl<LocationRepository>()),
   );
-  // Presentation (BLoC) didaftarkan pada Issue #05.
+  // BLoC (factory: instance baru tiap halaman agar state tidak tercampur).
+  sl.registerFactory(
+    () => LocationBloc(
+      getLocations: sl<GetLocations>(),
+      addLocation: sl<AddLocation>(),
+      updateLocation: sl<UpdateLocation>(),
+      deleteLocation: sl<DeleteLocation>(),
+      captureCurrentLocation: sl<CaptureCurrentLocation>(),
+    ),
+  );
 
   //! Features - Attendance
   // Didaftarkan pada Issue #06 (domain/data) & #07 (presentation).
