@@ -21,6 +21,7 @@ import 'features/attendance/domain/repositories/attendance_repository.dart';
 import 'features/attendance/domain/usecases/get_attendance_history.dart';
 import 'features/attendance/domain/usecases/submit_attendance.dart';
 import 'features/attendance/presentation/bloc/attendance_bloc.dart';
+import 'features/attendance/presentation/bloc/attendance_history_bloc.dart';
 
 /// Service locator global aplikasi.
 final GetIt sl = GetIt.instance;
@@ -101,5 +102,10 @@ Future<void> init() async {
   // BLoC (factory).
   sl.registerFactory(
     () => AttendanceBloc(submitAttendance: sl<SubmitAttendance>()),
+  );
+  sl.registerFactory(
+    () => AttendanceHistoryBloc(
+      getAttendanceHistory: sl<GetAttendanceHistory>(),
+    ),
   );
 }
