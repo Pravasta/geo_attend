@@ -13,7 +13,7 @@ ditutup dengan **PR ke `main`**.
 | [04](issue-04-location-domain-data.md) | Fitur Lokasi — Domain & Data (CRUD + Geotagging) | `feat/issue-04-location-domain-data` | #02, #03 | ✅ Done |
 | [05](issue-05-location-presentation.md) | Fitur Lokasi — Presentation (BLoC + UI) | `feat/issue-05-location-presentation` | #04 | ✅ Done |
 | [06](issue-06-attendance-domain-data.md) | Fitur Absensi — Domain & Data (Verifikasi 50m) | `feat/issue-06-attendance-domain-data` | #02, #03, #04 | ✅ Done |
-| [07](issue-07-attendance-presentation.md) | Fitur Absensi — Presentation (BLoC + UI + Dialog) | `feat/issue-07-attendance-presentation` | #06, #05 | ⬜ Todo |
+| [07](issue-07-attendance-presentation.md) | Fitur Absensi — Presentation (BLoC + UI + Dialog) | `feat/issue-07-attendance-presentation` | #06, #05 | ✅ Done |
 | [08](issue-08-attendance-history.md) | Riwayat Absensi (List + Format Tanggal) | `feat/issue-08-attendance-history` | #06, #07 | ⬜ Todo |
 | [09](issue-09-polish-final.md) | Penyempurnaan UI/UX, Edge Cases & Dokumentasi Akhir | `feat/issue-09-polish-final` | semua | ⬜ Todo |
 
