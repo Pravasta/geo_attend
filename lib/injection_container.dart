@@ -15,6 +15,11 @@ import 'features/location/domain/usecases/delete_location.dart';
 import 'features/location/domain/usecases/get_locations.dart';
 import 'features/location/domain/usecases/update_location.dart';
 import 'features/location/presentation/bloc/location_bloc.dart';
+import 'features/attendance/data/datasources/attendance_local_datasource.dart';
+import 'features/attendance/data/repositories/attendance_repository_impl.dart';
+import 'features/attendance/domain/repositories/attendance_repository.dart';
+import 'features/attendance/domain/usecases/get_attendance_history.dart';
+import 'features/attendance/domain/usecases/submit_attendance.dart';
 
 /// Service locator global aplikasi.
 final GetIt sl = GetIt.instance;
@@ -75,5 +80,22 @@ Future<void> init() async {
   );
 
   //! Features - Attendance
-  // Didaftarkan pada Issue #06 (domain/data) & #07 (presentation).
+  // Data sources
+  sl.registerLazySingleton<AttendanceLocalDataSource>(
+    () => AttendanceLocalDataSourceImpl(sl<AppDatabase>()),
+  );
+  // Repository
+  sl.registerLazySingleton<AttendanceRepository>(
+    () => AttendanceRepositoryImpl(
+      localDataSource: sl<AttendanceLocalDataSource>(),
+      locationService: sl<LocationService>(),
+      distanceCalculator: sl<DistanceCalculator>(),
+    ),
+  );
+  // Use cases
+  sl.registerLazySingleton(() => SubmitAttendance(sl<AttendanceRepository>()));
+  sl.registerLazySingleton(
+    () => GetAttendanceHistory(sl<AttendanceRepository>()),
+  );
+  // Presentation (BLoC) didaftarkan pada Issue #07.
 }
