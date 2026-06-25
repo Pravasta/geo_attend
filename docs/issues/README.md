@@ -17,7 +17,7 @@ ditutup dengan **PR ke `main`**.
 | [08](issue-08-attendance-history.md) | Riwayat Absensi (List + Format Tanggal) | `feat/issue-08-attendance-history` | #06, #07 | ✅ Done |
 | [10](issue-10-env-google-maps-key.md) | Konfigurasi Environment (.env) & Google Maps API Key | `feat/issue-10-env-google-maps-key` | #01 | ✅ Done |
 | [11](issue-11-map-picker.md) | Map Picker: Pilih Lokasi via Google Maps | `feat/issue-11-map-picker` | #10, #05 | ✅ Done |
-| [09](issue-09-polish-final.md) | Penyempurnaan UI/UX, Edge Cases & Dokumentasi Akhir | `feat/issue-09-polish-final` | semua (termasuk #10, #11) | ⬜ Todo |
+| [09](issue-09-polish-final.md) | Penyempurnaan UI/UX, Edge Cases & Dokumentasi Akhir | `feat/issue-09-polish-final` | semua (termasuk #10, #11) | ✅ Done |
 
 > **Catatan urutan**: Issue **#10** dan **#11** (tambahan: Google Maps map picker)
 > dikerjakan **setelah #08 dan sebelum #09**. Issue **#09** tetap menjadi tahap
