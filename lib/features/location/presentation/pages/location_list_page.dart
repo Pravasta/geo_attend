@@ -29,11 +29,12 @@ class _LocationListView extends StatelessWidget {
   void _reload(BuildContext context) =>
       context.read<LocationBloc>().add(const LoadLocations());
 
-  Future<void> _openForm(BuildContext context, {LocationEntity? location}) async {
+  Future<void> _openForm(
+    BuildContext context, {
+    LocationEntity? location,
+  }) async {
     final saved = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => LocationFormPage(location: location),
-      ),
+      MaterialPageRoute(builder: (_) => LocationFormPage(location: location)),
     );
     if (saved == true && context.mounted) {
       _reload(context);
@@ -108,6 +109,7 @@ class _LocationListView extends StatelessWidget {
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: state.locations.length,
+              physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 final loc = state.locations[index];
                 return LocationListItem(
