@@ -5,23 +5,30 @@
 
 - **Repository**: https://github.com/Pravasta/geo_attend
 - **Tanggal**: 26 Juni 2026
-- **Status**: Selesai (11 issue)
+- **Status**: Selesai (17 issue — 2 fase)
 
 ---
 
 ## 1. Ringkasan Proses
 
-Pengembangan dilakukan secara terstruktur dan terdokumentasi:
+Pengembangan dilakukan secara terstruktur dan terdokumentasi dalam **2 fase**:
 
+**Fase 1 — Fungsionalitas (Issue #01–#11)**
 1. **Brainstorming** (`docs/brainstorming/`) — analisis kebutuhan, scope,
    arsitektur, skema data, dan rencana.
-2. **Pemecahan Issue** (`docs/issues/`) — task dipecah menjadi 11 issue kecil.
+2. **Pemecahan Issue** (`docs/issues/`) — task dipecah menjadi issue kecil.
 3. **Eksekusi per issue** — tiap issue dikerjakan di branch terpisah, diuji,
    didokumentasikan di `docs/result/`, lalu di-merge ke `main` via Pull Request.
 4. **Revisi** (`docs/revision/`) — perubahan desain dicatat saat diperlukan.
-5. **Finalisasi** — penyempurnaan UI/UX, splash screen, dan dokumentasi akhir.
 
-Total: **11 Pull Request**, seluruh test hijau, `flutter analyze` bersih.
+**Fase 2 — Implementasi Desain (Issue #12–#17)**
+Berdasarkan mockup dari Claude (Design) di `docs/design/`, seluruh tampilan
+diimplementasikan ulang agar presisi dengan desain: design system + komponen
+reusable, lalu redesain Home, Lokasi, Form/Map Picker, Absensi/Dialog, dan
+Riwayat (dengan filter).
+
+Total: **17 Pull Request**, seluruh test hijau (**78 test**), `flutter analyze`
+bersih.
 
 ---
 
@@ -40,14 +47,19 @@ Total: **11 Pull Request**, seluruh test hijau, `flutter analyze` bersih.
 - Catatan tersimpan (diterima maupun ditolak) sebagai bukti.
 
 ### Riwayat Absensi
-- Daftar absensi dengan waktu terformat, badge status berwarna, dan jarak.
+- Daftar absensi dengan waktu terformat (Indonesia), badge status berwarna, jarak.
+- **Filter** Semua / Diterima / Ditolak (client-side).
 - Pull-to-refresh; urutan terbaru lebih dulu.
 
-### UI/UX
-- Splash screen (native + animasi dalam aplikasi).
-- HomePage dashboard dengan header gradien & menu kartu.
-- Font **Poppins** (`google_fonts`), tema Material 3 terpusat.
-- Loading / empty / error state konsisten di seluruh halaman.
+### UI/UX (mengikuti mockup desain)
+- **Design system terpusat** + komponen reusable (`AppButton`, `AppCard`,
+  `StatusBadge`, `EmptyStateView`, `ErrorStateView`, `SkeletonBox`, dll.).
+- Splash screen (native + animasi pulse dalam aplikasi).
+- **HomePage dashboard**: header sapaan dinamis + kartu ringkasan (lokasi,
+  absensi, terakhir) + kartu aksi + menu.
+- **Skeleton loading**, empty & error state konsisten di seluruh halaman.
+- Dialog hasil absensi beranimasi; kartu detail + status GPS pada halaman absensi.
+- Font **Poppins** (`google_fonts`), tema Material 3, warna brand indigo + teal.
 
 ---
 
@@ -69,9 +81,10 @@ lib/
 │   ├── services/      # Permission, Location, Geocoding, Connectivity
 │   ├── theme/         # AppTheme, AppColors
 │   ├── usecases/      # UseCase base
-│   └── utils/         # DistanceCalculator, DateFormatter
+│   ├── utils/         # DistanceCalculator, DateFormatter
+│   └── widgets/       # Komponen UI reusable (design system)
 ├── features/
-│   ├── home/          # Splash & HomePage
+│   ├── home/          # Splash, HomePage, HomeCubit (ringkasan)
 │   ├── location/      # data / domain / presentation
 │   └── attendance/    # data / domain / presentation
 ├── injection_container.dart   # Dependency Injection (get_it)
@@ -143,11 +156,12 @@ Lingkungan: Flutter **3.44.3** (FVM, dipin di `.fvmrc`), Dart 3.12.x.
 fvm flutter test
 ```
 
-- **65 test** lulus, `flutter analyze` bersih.
+- **78 test** lulus, `flutter analyze` bersih.
 - Cakupan: util (distance 50 m, date formatter), database (CRUD in-memory),
   services (permission/location/connectivity), repository (lokasi & absensi),
-  BLoC (location, attendance, history), widget (home, splash, map picker,
-  list page).
+  BLoC/Cubit (location, attendance, history+filter, home), komponen design
+  system (button/badge/empty state), widget (home, splash, map picker, form,
+  list, dialog hasil).
 
 > Render peta Google Maps & perilaku GPS nyata diverifikasi secara **manual** di
 > perangkat fisik (tidak dapat diuji penuh via unit/widget test).
@@ -175,9 +189,10 @@ fvm flutter test
 | Folder | Isi |
 |--------|-----|
 | `docs/brainstorming/` | Brainstorming awal |
-| `docs/issues/` | 11 issue + index |
-| `docs/result/` | Hasil tiap issue (#01–#11) |
+| `docs/issues/` | 17 issue + index (2 fase) |
+| `docs/result/` | Hasil tiap issue (#01–#17) |
 | `docs/revision/` | Catatan revisi |
+| `docs/design/` | Brief desain & mockup (Claude Design) |
 | `docs/final/` | Dokumentasi akhir (file ini) |
 
 ---
