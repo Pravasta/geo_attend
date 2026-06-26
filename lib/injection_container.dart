@@ -22,6 +22,7 @@ import 'features/attendance/domain/usecases/get_attendance_history.dart';
 import 'features/attendance/domain/usecases/submit_attendance.dart';
 import 'features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'features/attendance/presentation/bloc/attendance_history_bloc.dart';
+import 'features/home/presentation/cubit/home_cubit.dart';
 
 /// Service locator global aplikasi.
 final GetIt sl = GetIt.instance;
@@ -105,6 +106,14 @@ Future<void> init() async {
   );
   sl.registerFactory(
     () => AttendanceHistoryBloc(
+      getAttendanceHistory: sl<GetAttendanceHistory>(),
+    ),
+  );
+
+  //! Features - Home
+  sl.registerFactory(
+    () => HomeCubit(
+      getLocations: sl<GetLocations>(),
       getAttendanceHistory: sl<GetAttendanceHistory>(),
     ),
   );
