@@ -15,6 +15,7 @@ import 'package:geo_attend/features/location/domain/usecases/update_location.dar
 import 'package:geo_attend/features/location/presentation/bloc/location_bloc.dart';
 import 'package:geo_attend/features/location/presentation/pages/location_list_page.dart';
 import 'package:geo_attend/injection_container.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockGetLocations extends Mock implements GetLocations {}
@@ -29,7 +30,10 @@ class MockCaptureCurrentLocation extends Mock
     implements CaptureCurrentLocation {}
 
 void main() {
-  setUpAll(() => registerFallbackValue(const NoParams()));
+  setUpAll(() {
+    GoogleFonts.config.allowRuntimeFetching = false;
+    registerFallbackValue(const NoParams());
+  });
 
   setUp(() {
     final getLocations = MockGetLocations();
@@ -54,8 +58,8 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: LocationListPage()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Manajemen Lokasi'), findsOneWidget);
-    expect(find.text('Tambah'), findsOneWidget);
+    expect(find.text('Lokasi'), findsOneWidget);
+    expect(find.text('Tambah Lokasi'), findsOneWidget);
     expect(find.textContaining('Belum ada lokasi'), findsOneWidget);
   });
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/widgets.dart';
 import '../../../../injection_container.dart';
 import '../../domain/entities/location_entity.dart';
 import '../bloc/location_bloc.dart';
@@ -50,6 +52,7 @@ class _LocationListView extends StatelessWidget {
             child: const Text('Batal'),
           ),
           FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('Hapus'),
           ),
@@ -64,7 +67,7 @@ class _LocationListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Manajemen Lokasi')),
+      appBar: AppBar(title: const Text('Lokasi')),
       body: BlocConsumer<LocationBloc, LocationState>(
         listener: (context, state) {
           if (state is LocationOperationSuccess) {
@@ -74,24 +77,33 @@ class _LocationListView extends StatelessWidget {
             Fluttertoast.showToast(msg: state.message);
           }
         },
-        // Hanya bangun ulang untuk state yang berkaitan dengan tampilan daftar.
         buildWhen: (previous, current) =>
             current is LocationLoading ||
             current is LocationLoaded ||
             current is LocationError,
         builder: (context, state) {
           if (state is LocationLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const _LocationSkeleton();
           }
           if (state is LocationError) {
-            return _ErrorView(
+            return ErrorStateView(
               message: state.message,
               onRetry: () => _reload(context),
             );
           }
           if (state is LocationLoaded) {
             if (state.locations.isEmpty) {
-              return const _EmptyView();
+              return EmptyStateView(
+                icon: Icons.location_off,
+                iconColor: AppColors.primaryLight,
+                title: 'Belum ada lokasi',
+                message:
+                    'Tambahkan titik lokasi terlebih dahulu untuk mulai '
+                    'melakukan absensi.',
+                actionLabel: 'Tambah Lokasi',
+                actionIcon: Icons.add_location_alt,
+                onAction: () => _openForm(context),
+              );
             }
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -110,64 +122,101 @@ class _LocationListView extends StatelessWidget {
         },
       ),
       floatingActionButton: Builder(
-        builder: (context) => FloatingActionButton.extended(
-          onPressed: () => _openForm(context),
-          icon: const Icon(Icons.add_location_alt),
-          label: const Text('Tambah'),
+        builder: (context) => _GradientFab(onPressed: () => _openForm(context)),
+      ),
+    );
+  }
+}
+
+/// FAB gradien brand.
+class _GradientFab extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _GradientFab({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.brandGradient,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.45),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: onPressed,
+          child: const SizedBox(
+            width: 56,
+            height: 56,
+            child: Icon(Icons.add, color: Colors.white, size: 28),
+          ),
         ),
       ),
     );
   }
 }
 
-class _EmptyView extends StatelessWidget {
-  const _EmptyView();
+/// Skeleton loading untuk daftar lokasi (3 kartu).
+class _LocationSkeleton extends StatelessWidget {
+  const _LocationSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.location_off, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              'Belum ada lokasi.\nTekan tombol "Tambah" untuk menambahkan.',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorView extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
-
-  const _ErrorView({required this.message, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(message, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Coba Lagi'),
-            ),
-          ],
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: 3,
+      itemBuilder: (context, _) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        child: AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const SkeletonBox(width: 40, height: 40, radius: 12),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        SkeletonBox(width: 130, height: 13, radius: 6),
+                        SizedBox(height: 8),
+                        SkeletonBox(width: 200, height: 10, radius: 6),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: const [
+                  SkeletonBox(width: 130, height: 22, radius: 8),
+                  SizedBox(width: 8),
+                  SkeletonBox(width: 55, height: 22, radius: 8),
+                ],
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Divider(height: 1),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  SkeletonBox(width: 68, height: 34, radius: 10),
+                  SizedBox(width: 8),
+                  SkeletonBox(width: 72, height: 34, radius: 10),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
