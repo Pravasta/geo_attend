@@ -1,0 +1,12 @@
+# Konfigurasi launcher icon GeoAttendance.
+# Generate ulang dengan:
+#   fvm dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/app_logo.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  # Adaptive icon Android 8+ : latar brand + logo sebagai foreground.
+  adaptive_icon_background: "#3D5AFE"
+  adaptive_icon_foreground: "assets/app_logo.png"

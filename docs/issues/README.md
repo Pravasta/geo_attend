@@ -39,6 +39,12 @@ diimplementasikan ulang agar presisi dengan desain. Dikerjakan **berurutan**
 | [16](issue-16-attendance-dialog-redesign.md) | Redesain Absensi & Dialog Hasil | `feat/issue-16-attendance-dialog-redesign` | #12 | ✅ Done |
 | [17](issue-17-history-redesign-filter.md) | Redesain Riwayat Absensi + Filter | `feat/issue-17-history-redesign-filter` | #12 | ✅ Done |
 
+## Finalisasi / Branding
+
+| # | Judul | Branch | Bergantung pada | Status |
+|---|-------|--------|-----------------|--------|
+| [18](issue-18-branding-launcher-name.md) | Branding: Launcher Icon & Nama Aplikasi | `feat/issue-18-branding-launcher-name` | #09 | ✅ Done |
+
 ## Legenda Status
 - ⬜ Todo — belum dikerjakan
 - 🟨 In Progress — sedang dikerjakan
