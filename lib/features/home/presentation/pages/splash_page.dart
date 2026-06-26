@@ -14,10 +14,11 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fade;
   late final Animation<double> _scale;
+  late final AnimationController _pulse;
 
   @override
   void initState() {
@@ -30,6 +31,10 @@ class _SplashPageState extends State<SplashPage>
     _scale = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    )..repeat();
     _controller.forward();
     _goNext();
   }
@@ -50,6 +55,7 @@ class _SplashPageState extends State<SplashPage>
   @override
   void dispose() {
     _controller.dispose();
+    _pulse.dispose();
     super.dispose();
   }
 
@@ -68,24 +74,50 @@ class _SplashPageState extends State<SplashPage>
                 scale: _scale,
                 child: Column(
                   children: [
-                    Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 24,
-                            offset: const Offset(0, 10),
+                    SizedBox(
+                      width: 130,
+                      height: 130,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Denyut (pulse) di belakang logo.
+                          ScaleTransition(
+                            scale: Tween<double>(begin: 0.85, end: 1.25)
+                                .animate(_pulse),
+                            child: FadeTransition(
+                              opacity: Tween<double>(begin: 0.5, end: 0.0)
+                                  .animate(_pulse),
+                              child: Container(
+                                width: 110,
+                                height: 110,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 110,
+                            height: 110,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(28),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.15),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.location_on,
+                              size: 64,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ],
-                      ),
-                      child: const Icon(
-                        Icons.location_on,
-                        size: 64,
-                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 24),
