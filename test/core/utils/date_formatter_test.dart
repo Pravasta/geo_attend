@@ -13,4 +13,13 @@ void main() {
 
     expect(result, '05 Jan 2026, 09:05');
   });
+
+  test('formatHistoryDateTime memakai hari & bulan Indonesia', () {
+    // 26 Juni 2026 adalah hari Jumat.
+    final result = DateFormatter.formatHistoryDateTime(
+      DateTime(2026, 6, 26, 8, 2),
+    );
+
+    expect(result, 'Jum, 26 Jun 2026 · 08:02');
+  });
 }

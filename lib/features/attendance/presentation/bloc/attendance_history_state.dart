@@ -16,12 +16,30 @@ class AttendanceHistoryLoading extends AttendanceHistoryState {
 }
 
 class AttendanceHistoryLoaded extends AttendanceHistoryState {
-  final List<AttendanceEntity> history;
+  /// Seluruh riwayat (sebelum filter).
+  final List<AttendanceEntity> all;
+  final AttendanceFilter filter;
 
-  const AttendanceHistoryLoaded(this.history);
+  const AttendanceHistoryLoaded(this.all, {this.filter = AttendanceFilter.all});
+
+  /// Riwayat setelah filter diterapkan.
+  List<AttendanceEntity> get filtered {
+    switch (filter) {
+      case AttendanceFilter.accepted:
+        return all.where((a) => a.isAccepted).toList();
+      case AttendanceFilter.rejected:
+        return all.where((a) => !a.isAccepted).toList();
+      case AttendanceFilter.all:
+        return all;
+    }
+  }
+
+  AttendanceHistoryLoaded copyWith({AttendanceFilter? filter}) {
+    return AttendanceHistoryLoaded(all, filter: filter ?? this.filter);
+  }
 
   @override
-  List<Object?> get props => [history];
+  List<Object?> get props => [all, filter];
 }
 
 class AttendanceHistoryError extends AttendanceHistoryState {

@@ -11,3 +11,13 @@ sealed class AttendanceHistoryEvent extends Equatable {
 class LoadAttendanceHistory extends AttendanceHistoryEvent {
   const LoadAttendanceHistory();
 }
+
+/// Mengubah filter status yang ditampilkan.
+class FilterChanged extends AttendanceHistoryEvent {
+  final AttendanceFilter filter;
+
+  const FilterChanged(this.filter);
+
+  @override
+  List<Object?> get props => [filter];
+}

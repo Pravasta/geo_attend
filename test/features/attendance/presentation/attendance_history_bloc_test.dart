@@ -84,4 +84,25 @@ void main() {
       AttendanceHistoryError('gagal'),
     ],
   );
+
+  blocTest<AttendanceHistoryBloc, AttendanceHistoryState>(
+    'FilterChanged menyaring daftar (accepted/rejected)',
+    build: () {
+      when(() => getAttendanceHistory(any()))
+          .thenAnswer((_) async => Right(tHistory));
+      return buildBloc();
+    },
+    act: (bloc) async {
+      bloc.add(const LoadAttendanceHistory());
+      await Future<void>.delayed(Duration.zero);
+      bloc.add(const FilterChanged(AttendanceFilter.rejected));
+    },
+    verify: (bloc) {
+      final state = bloc.state as AttendanceHistoryLoaded;
+      expect(state.filter, AttendanceFilter.rejected);
+      // tHistory: 1 accepted + 1 rejected -> filtered rejected = 1.
+      expect(state.filtered.length, 1);
+      expect(state.filtered.first.isAccepted, isFalse);
+    },
+  );
 }
