@@ -34,7 +34,7 @@ diimplementasikan ulang agar presisi dengan desain. Dikerjakan **berurutan**
 |---|-------|--------|-----------------|--------|
 | [12](issue-12-design-system-components.md) | Design System & Komponen UI Reusable | `feat/issue-12-design-system-components` | #09 | ✅ Done |
 | [13](issue-13-home-dashboard-redesign.md) | Redesain Home Dashboard & Splash | `feat/issue-13-home-dashboard-redesign` | #12 | ✅ Done |
-| [14](issue-14-location-list-redesign.md) | Redesain Manajemen Lokasi (List/Empty/Skeleton) | `feat/issue-14-location-list-redesign` | #12 | ⬜ Todo |
+| [14](issue-14-location-list-redesign.md) | Redesain Manajemen Lokasi (List/Empty/Skeleton) | `feat/issue-14-location-list-redesign` | #12 | ✅ Done |
 | [15](issue-15-form-mappicker-redesign.md) | Redesain Form Lokasi & Map Picker | `feat/issue-15-form-mappicker-redesign` | #12, #14 | ⬜ Todo |
 | [16](issue-16-attendance-dialog-redesign.md) | Redesain Absensi & Dialog Hasil | `feat/issue-16-attendance-dialog-redesign` | #12 | ⬜ Todo |
 | [17](issue-17-history-redesign-filter.md) | Redesain Riwayat Absensi + Filter | `feat/issue-17-history-redesign-filter` | #12 | ⬜ Todo |
